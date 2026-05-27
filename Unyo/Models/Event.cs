@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace Unyo.Models; 
 
-public class Event
+public class Event : BaseIdentity
 {
-    public int Id { get; set; }
-
     [Required]
     [StringLength(200, MinimumLength = 5)]
     public string Title { get; set; } = string.Empty;
@@ -15,6 +13,8 @@ public class Event
 
     [Required]
     public DateTime Date { get; set; }
+
+    public string? ImagePath { get; set; }
 
     // Foreign Keys
     public int VenueId { get; set; }
