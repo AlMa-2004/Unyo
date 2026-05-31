@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Unyo.Models;
 
-public class User : BaseIdentity//: IdentityUser
+public class User : BaseEntity//: IdentityUser
 {
     [Required]
     [StringLength(100, MinimumLength = 2)]

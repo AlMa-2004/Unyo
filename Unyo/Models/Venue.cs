@@ -3,7 +3,7 @@
 namespace Unyo.Models;
 
 
-public class Venue : BaseIdentity
+public class Venue : BaseEntity
 {
     [Required]
     [StringLength(150, MinimumLength = 3)]

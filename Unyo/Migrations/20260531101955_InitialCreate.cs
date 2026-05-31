@@ -107,7 +107,7 @@ namespace Unyo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EventsRegistrations",
+                name: "EventRegistrations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -120,19 +120,29 @@ namespace Unyo.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EventsRegistrations", x => x.Id);
+                    table.PrimaryKey("PK_EventRegistrations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EventsRegistrations_Events_EventId",
+                        name: "FK_EventRegistrations_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_EventsRegistrations_Tickets_TicketId",
+                        name: "FK_EventRegistrations_Tickets_TicketId",
                         column: x => x.TicketId,
                         principalTable: "Tickets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventRegistrations_EventId",
+                table: "EventRegistrations",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventRegistrations_TicketId",
+                table: "EventRegistrations",
+                column: "TicketId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_CategoryId",
@@ -145,16 +155,6 @@ namespace Unyo.Migrations
                 column: "VenueId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EventsRegistrations_EventId",
-                table: "EventsRegistrations",
-                column: "EventId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EventsRegistrations_TicketId",
-                table: "EventsRegistrations",
-                column: "TicketId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Tickets_EventId",
                 table: "Tickets",
                 column: "EventId");
@@ -164,7 +164,7 @@ namespace Unyo.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "EventsRegistrations");
+                name: "EventRegistrations");
 
             migrationBuilder.DropTable(
                 name: "Users");

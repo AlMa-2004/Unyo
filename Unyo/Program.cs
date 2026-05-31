@@ -1,6 +1,8 @@
 
 using Microsoft.EntityFrameworkCore;
-
+using Unyo.Data;
+using Unyo.Repositories;
+using Unyo.Services;
 namespace Unyo
 {
     public class Program
@@ -19,6 +21,14 @@ namespace Unyo
 
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("Unyo")));
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IVenueService, VenueService>();
+            builder.Services.AddScoped<IEventService, EventService>();
+            builder.Services.AddScoped<ITicketService, TicketService>();
+            builder.Services.AddScoped<IEventRegistrationService, EventRegistrationService>();
 
             var app = builder.Build();
 

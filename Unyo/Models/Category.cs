@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Unyo.Models;
-public class Category : BaseIdentity
+public class Category : BaseEntity
 {
     [Required]
     [StringLength(100, MinimumLength = 2)]

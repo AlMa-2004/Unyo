@@ -1,6 +1,6 @@
 ﻿namespace Unyo.Models
 {
-    public class BaseIdentity
+    public class BaseEntity
     {
         public int Id { get; set; }
     }

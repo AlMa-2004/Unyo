@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace Unyo.Models; 
 
-public class Event : BaseIdentity
+public class Event : BaseEntity
 {
     [Required]
     [StringLength(200, MinimumLength = 5)]
@@ -25,4 +25,7 @@ public class Event : BaseIdentity
 
     // Relationship: One event has many registrations
     public List<EventRegistration> Registrations { get; set; } = [];
+
+    // One event can have multiple ticket types (VIP, Normal, etc.)
+    public List<Ticket> Tickets { get; set; } = [];
 }

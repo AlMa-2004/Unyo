@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Unyo.Data;
 
 #nullable disable
 
@@ -109,7 +110,7 @@ namespace Unyo.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("EventsRegistrations");
+                    b.ToTable("EventRegistrations");
                 });
 
             modelBuilder.Entity("Unyo.Models.Ticket", b =>
@@ -230,7 +231,7 @@ namespace Unyo.Migrations
             modelBuilder.Entity("Unyo.Models.Ticket", b =>
                 {
                     b.HasOne("Unyo.Models.Event", "Event")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -246,6 +247,8 @@ namespace Unyo.Migrations
             modelBuilder.Entity("Unyo.Models.Event", b =>
                 {
                     b.Navigation("Registrations");
+
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("Unyo.Models.Venue", b =>

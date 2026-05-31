@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Unyo.Models;
-//using Unyo.Data;
+using Unyo.Data;
 
 namespace Unyo.Controllers;
 

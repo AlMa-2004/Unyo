@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Unyo.Models;
 
-public class Ticket : BaseIdentity
+public class Ticket : BaseEntity
 {
     [Required]
     [StringLength(50)]

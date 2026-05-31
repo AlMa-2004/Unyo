@@ -1,6 +1,6 @@
 ﻿namespace Unyo.Models;
 
-public class EventRegistration : BaseIdentity
+public class EventRegistration : BaseEntity
 {
     public string UserId { get; set; } = string.Empty;
     public int TicketId { get; set; }

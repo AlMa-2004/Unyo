@@ -5,13 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Unyo.Data;
 
 #nullable disable
 
 namespace Unyo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260527102954_InitialCreate")]
+    [Migration("20260531101955_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -112,7 +113,7 @@ namespace Unyo.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("EventsRegistrations");
+                    b.ToTable("EventRegistrations");
                 });
 
             modelBuilder.Entity("Unyo.Models.Ticket", b =>
@@ -233,7 +234,7 @@ namespace Unyo.Migrations
             modelBuilder.Entity("Unyo.Models.Ticket", b =>
                 {
                     b.HasOne("Unyo.Models.Event", "Event")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -249,6 +250,8 @@ namespace Unyo.Migrations
             modelBuilder.Entity("Unyo.Models.Event", b =>
                 {
                     b.Navigation("Registrations");
+
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("Unyo.Models.Venue", b =>
