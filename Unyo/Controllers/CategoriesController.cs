@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Unyo.Models;
 using Unyo.Services;
 
@@ -16,6 +17,7 @@ public class CategoriesController : ControllerBase
     }
 
     // GET: api/categories
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Category>>> GetCategories(CancellationToken cancellationToken)
     {
@@ -24,6 +26,7 @@ public class CategoriesController : ControllerBase
     }
 
     // GET: api/categories/5
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<Category>> GetCategory(int id, CancellationToken cancellationToken)
     {
@@ -35,6 +38,7 @@ public class CategoriesController : ControllerBase
     }
 
     // POST: api/categories
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<Category>> CreateCategory(Category category, CancellationToken cancellationToken)
     {
@@ -46,6 +50,7 @@ public class CategoriesController : ControllerBase
     }
 
     // DELETE: api/categories/5
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCategory(int id, CancellationToken cancellationToken)
     {

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Unyo.Models;
 
-public class User : BaseEntity//: IdentityUser
+public class User : IdentityUser
 {
     [Required]
     [StringLength(100, MinimumLength = 2)]
@@ -15,4 +15,6 @@ public class User : BaseEntity//: IdentityUser
 
     [Required]
     public DateTime BirthDate { get; set; }
+
+    public List<EventRegistration> Registrations { get; set; } = new();
 }

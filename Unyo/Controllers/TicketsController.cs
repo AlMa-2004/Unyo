@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Unyo.Models;
 using Unyo.Services;
 
@@ -6,6 +7,7 @@ namespace Unyo.Controllers;
 
 [ApiController]
 [Route("api/[controller]")] // Endpoint: api/tickets
+[Authorize]
 public class TicketsController : ControllerBase
 {
     private readonly ITicketService _ticketService;
@@ -17,6 +19,7 @@ public class TicketsController : ControllerBase
 
     // GET: api/tickets
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets(CancellationToken cancellationToken)
     {
         var tickets = await _ticketService.GetAllTicketsAsync(cancellationToken);
@@ -25,6 +28,7 @@ public class TicketsController : ControllerBase
 
     // GET: api/tickets/5
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<Ticket>> GetTicket(int id, CancellationToken cancellationToken)
     {
         var ticket = await _ticketService.GetTicketByIdAsync(id, cancellationToken);
@@ -36,6 +40,7 @@ public class TicketsController : ControllerBase
 
     // POST: api/tickets
     [HttpPost]
+    [Authorize(Roles = "Admin,Vendor")]
     public async Task<ActionResult<Ticket>> CreateTicket(Ticket ticket, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -47,6 +52,7 @@ public class TicketsController : ControllerBase
 
     // DELETE: api/tickets/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin,Vendor")]
     public async Task<IActionResult> DeleteTicket(int id, CancellationToken cancellationToken)
     {
         var result = await _ticketService.DeleteTicketAsync(id, cancellationToken);

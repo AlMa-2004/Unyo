@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Unyo.Models;
 using Unyo.Services;
 
 namespace Unyo.Controllers;
 
 [ApiController]
-[Route("api/[controller]")] // Endpoint: api/venues
+[Route("api/[controller]")]
+[Authorize]
 public class VenuesController : ControllerBase
 {
     private readonly IVenueService _venueService;
@@ -17,6 +19,7 @@ public class VenuesController : ControllerBase
 
     // GET: api/venues
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<Venue>>> GetVenues(CancellationToken cancellationToken)
     {
         var venues = await _venueService.GetAllVenuesAsync(cancellationToken);
@@ -25,6 +28,7 @@ public class VenuesController : ControllerBase
 
     // GET: api/venues/5
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<Venue>> GetVenue(int id, CancellationToken cancellationToken)
     {
         var venue = await _venueService.GetVenueByIdAsync(id, cancellationToken);
@@ -36,7 +40,8 @@ public class VenuesController : ControllerBase
 
     // POST: api/venues
     [HttpPost]
-    public async Task<ActionResult<Venue>> CreateVenue(Venue venue, CancellationToken cancellationToken)
+    [Authorize(Roles = "Admin,Vendor")]
+    public async Task<ActionResult<Venue>> CreateVenue([FromBody] Venue venue, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -47,6 +52,7 @@ public class VenuesController : ControllerBase
 
     // DELETE: api/venues/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin,Vendor")]
     public async Task<IActionResult> DeleteVenue(int id, CancellationToken cancellationToken)
     {
         var result = await _venueService.DeleteVenueAsync(id, cancellationToken);

@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Unyo.Models;
 using Unyo.Services;
 
 namespace Unyo.Controllers;
 
 [ApiController]
-[Route("api/[controller]")] // Endpoint-ul va fi: api/events
+[Route("api/[controller]")]
 public class EventsController : ControllerBase
 {
     private readonly IEventService _eventService;
@@ -15,8 +17,16 @@ public class EventsController : ControllerBase
         _eventService = eventService;
     }
 
+    // HELPER PRIVAT PENTRU EVENIMENTE
+    private bool IsOwnerOrAdmin(Event @event)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return @event.OrganizerId == userId || User.IsInRole("Admin");
+    }
+
     // GET: api/events
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<Event>>> GetEvents(CancellationToken cancellationToken)
     {
         var events = await _eventService.GetAllEventsAsync(cancellationToken);
@@ -25,6 +35,7 @@ public class EventsController : ControllerBase
 
     // GET: api/events/5
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<Event>> GetEvent(int id, CancellationToken cancellationToken)
     {
         var @event = await _eventService.GetEventByIdAsync(id, cancellationToken);
@@ -36,6 +47,7 @@ public class EventsController : ControllerBase
 
     // POST: api/events
     [HttpPost]
+    [Authorize(Roles = "Admin,Vendor")]
     public async Task<ActionResult<Event>> CreateEvent(Event @event, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -48,6 +60,7 @@ public class EventsController : ControllerBase
 
     // DELETE: api/events/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin,Vendor")]
     public async Task<IActionResult> DeleteEvent(int id, CancellationToken cancellationToken)
     {
         var result = await _eventService.DeleteEventAsync(id, cancellationToken);
