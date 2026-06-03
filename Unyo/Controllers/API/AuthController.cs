@@ -1,45 +1,78 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Unyo.Models;
 using Unyo.Dtos;
-//using Unyo.Services;
 
 namespace Unyo.Controllers.API;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthApiController : ControllerBase
 {
-    // private readonly IAuthService _authService; 
-    // public AuthController(IAuthService authService) { _authService = authService; }
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly IConfiguration _configuration;
 
-    // POST: api/auth/register
-    [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Register([FromBody] RegisterDto dto, CancellationToken cancellationToken)
+    public AuthApiController(
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IConfiguration configuration)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        // var result = await _authService.RegisterAsync(dto);
-        // if (!result.Succeeded) return BadRequest(result.Errors);
-
-        return Ok(new { message = "User registered successfully!" });
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _configuration = configuration;
     }
 
-    // POST: api/auth/login
+    // POST: /api/authapi/login
     [HttpPost("login")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> Login([FromBody] LoginDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user == null)
+            return Unauthorized(new { message = "Date de logare incorecte." });
 
-        // var token = await _authService.LoginAsync(dto);
-        // if (token == null) return Unauthorized("Invalid email or password.");
+        var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: false);
+        if (!result.Succeeded)
+            return Unauthorized(new { message = "Date de logare incorecte." });
 
-        string mockToken = "fake-jwt-token-for-testing";
-        return Ok(new { token = mockToken });
+        var token = await GenerateJwtAsync(user);
+
+        return Ok(new
+        {
+            token = token,
+            expiresIn = _configuration.GetValue<int>("Jwt:ExpiresInMinutes") * 60
+        });
+    }
+
+    private async Task<string> GenerateJwtAsync(User user)
+    {
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id),
+            new(ClaimTypes.Name, user.UserName ?? user.Email!),
+            new(ClaimTypes.Email, user.Email!)
+        };
+
+        var roles = await _userManager.GetRolesAsync(user);
+        foreach (var role in roles)
+            claims.Add(new Claim(ClaimTypes.Role, role));
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var tokenDescriptor = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("Jwt:ExpiresInMinutes")),
+            signingCredentials: credentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
 }
