@@ -1,12 +1,13 @@
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Unyo.Data;
 using Unyo.Models;
 using Unyo.Repositories;
 using Unyo.Services;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Unyo.Middleware;
 
 namespace Unyo;
 
@@ -18,7 +19,6 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
 
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("Unyo")));
@@ -102,6 +102,9 @@ public class Program
                 options.RoutePrefix = "swagger";
             });
         }
+
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
+        app.UseMiddleware<LoggingMiddleware>();
 
         app.UseHttpsRedirection();
 

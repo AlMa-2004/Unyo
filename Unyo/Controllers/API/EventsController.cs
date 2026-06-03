@@ -33,6 +33,8 @@ public class EventsController : ControllerBase
     public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents(CancellationToken cancellationToken)
     {
         var events = await _eventService.GetAllEventsAsync(cancellationToken);
+        
+        //throw new Exception("Testare middleware erori!");
 
         // Map list of entities to list of flat DTOs
         var dtos = events.Select(e => e.MapToDto());
