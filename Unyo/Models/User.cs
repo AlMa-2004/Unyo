@@ -14,7 +14,7 @@ public class User : IdentityUser
     public string LastName { get; set; } = string.Empty;
 
     [Required]
-    public DateTime BirthDate { get; set; }
+    public DateTime? BirthDate { get; set; }
 
     public List<EventRegistration> Registrations { get; set; } = new();
 }
