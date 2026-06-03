@@ -90,6 +90,16 @@ public class Program
             });
         });
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAngularDev", policy =>
+            {
+                policy.WithOrigins("http://localhost:4200")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -109,6 +119,8 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseRouting();
+
+        app.UseCors("AllowAngularDev"); // Cross-Origin Resource Sharing
 
         using (var scope = app.Services.CreateScope())
         {
