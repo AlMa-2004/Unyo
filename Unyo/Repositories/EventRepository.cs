@@ -13,7 +13,7 @@ public class EventRepository : Repository<Event>, IEventRepository
         return await _context.Events
             .Include(e => e.Categories)
             .Include(e => e.Venue)
-            .OrderBy(e => e.Date)
+            .Include(e => e.Tickets)
             .ToListAsync(cancellationToken);
     }
 

@@ -1,4 +1,5 @@
-﻿using Unyo.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Unyo.Models;
 using Unyo.Repositories;
 
 namespace Unyo.Services;
@@ -35,6 +36,24 @@ public class VenueService : IVenueService
         if (existing == null) return false;
 
         _unitOfWork.Venues.Delete(existing);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> UpdateVenueAsync(Venue venue, CancellationToken cancellationToken)
+    {
+        var existingVenue = await _unitOfWork.Venues.GetByIdAsync(venue.Id, cancellationToken);
+
+        if (existingVenue == null)
+        {
+            return false;
+        }
+
+        existingVenue.Name = venue.Name;
+        existingVenue.Address = venue.Address;
+        existingVenue.Capacity = venue.Capacity;
+        existingVenue.ImagePath = venue.ImagePath;
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return true;
     }

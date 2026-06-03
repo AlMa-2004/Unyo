@@ -43,12 +43,18 @@ public class EventService : IEventService
     public async Task UpdateEventCategoriesAsync(int eventId, List<int> categoryIds, CancellationToken cancellationToken = default)
     {
         var @event = await _unitOfWork.Events.GetByIdWithDetailsAsync(eventId, cancellationToken);
-        if (@event == null) throw new Exception("Evenimentul nu a fost găsit.");
+        if (@event == null) throw new Exception("Event has not been found.");
 
         var selectedCategories = await _unitOfWork.Categories.GetByIdsAsync(categoryIds, cancellationToken);
 
         @event.Categories = selectedCategories.ToList();
 
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateEventAsync(Event eventEntity, CancellationToken cancellationToken = default)
+    {
+        _unitOfWork.Events.Update(eventEntity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

@@ -10,4 +10,5 @@ public interface IEventService
     Task<bool> DeleteEventAsync(int id, CancellationToken cancellationToken = default);
 
     Task UpdateEventCategoriesAsync(int eventId, List<int> categoryIds, CancellationToken cancellationToken = default);
+    Task UpdateEventAsync(Event eventEntity, CancellationToken cancellationToken = default);
 }

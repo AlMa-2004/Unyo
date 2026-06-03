@@ -61,4 +61,22 @@ public class VenuesController : ControllerBase
         if (!result) return NotFound();
         return NoContent();
     }
+
+    [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin,Vendor")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateVenue(int id, [FromBody] CreateVenueDto dto, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var venue = dto.MapToEntity();
+        venue.Id = id;
+
+        var updated = await _venueService.UpdateVenueAsync(venue, cancellationToken);
+
+        if (!updated) return NotFound();
+
+        return NoContent();
+    }
 }

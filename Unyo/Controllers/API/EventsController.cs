@@ -109,4 +109,37 @@ public class EventsController : ControllerBase
 
         return NoContent();
     }
+
+    // PUT: api/events/5
+    [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin,Vendor")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateEvent(int id, [FromBody] CreateEventDto dto, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var existingEvent = await _eventService.GetEventByIdAsync(id, cancellationToken);
+        if (existingEvent == null)
+            return NotFound();
+
+        if (!IsEventOwnerOrAdmin(existingEvent))
+            return Forbid();
+
+        existingEvent.Title = dto.Title;
+        existingEvent.Description = dto.Description;
+        existingEvent.Date = dto.Date;
+        existingEvent.ImagePath = dto.ImagePath;
+        existingEvent.VenueId = dto.VenueId;
+
+        await _eventService.UpdateEventCategoriesAsync(id, dto.CategoryIds, cancellationToken);
+
+        await _eventService.UpdateEventAsync(existingEvent, cancellationToken);
+
+        return NoContent();
+    }
 }

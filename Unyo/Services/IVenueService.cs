@@ -8,4 +8,5 @@ public interface IVenueService
     Task<Venue?> GetVenueByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<Venue> CreateVenueAsync(Venue venue, CancellationToken cancellationToken = default);
     Task<bool> DeleteVenueAsync(int id, CancellationToken cancellationToken = default);
+    Task<bool> UpdateVenueAsync(Venue venue, CancellationToken cancellationToken);
 }
