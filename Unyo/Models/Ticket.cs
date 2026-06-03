@@ -16,4 +16,6 @@ public class Ticket : BaseEntity
 
     public int? EventId { get; set; }
     public Event? Event { get; set; }
+
+    public List<EventRegistration> Registrations { get; set; } = [];
 }

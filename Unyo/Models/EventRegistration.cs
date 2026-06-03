@@ -17,7 +17,8 @@ public class EventRegistration : BaseEntity
     public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
 
     [JsonIgnore]
-    public Ticket Ticket { get; set; }
+    [Required]
+    public Ticket Ticket { get; set; } = null!;
 
     [JsonIgnore]
     public User? User { get; set; }

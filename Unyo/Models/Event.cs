@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-namespace Unyo.Models; 
+namespace Unyo.Models;
 
 public class Event : BaseEntity
 {
@@ -23,8 +23,9 @@ public class Event : BaseEntity
     public int CategoryId { get; set; }
     public Category Category { get; set; } = null!;
 
-    // Relationship: One event has many registrations
-    public List<EventRegistration> Registrations { get; set; } = [];
+    [Required]
+    public string UserId { get; set; } = string.Empty;
+    public User User { get; set; } = null!;
 
     // One event can have multiple ticket types (VIP, Normal, etc.)
     public List<Ticket> Tickets { get; set; } = [];

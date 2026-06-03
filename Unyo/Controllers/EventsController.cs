@@ -18,10 +18,11 @@ public class EventsController : ControllerBase
     }
 
     // HELPER PRIVAT PENTRU EVENIMENTE
-    private bool IsOwnerOrAdmin(Event @event)
+    private bool IsEventOwnerOrAdmin(Event @event)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return @event.OrganizerId == userId || User.IsInRole("Admin");
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        return @event.UserId == currentUserId || User.IsInRole("Admin");
     }
 
     // GET: api/events
@@ -53,6 +54,12 @@ public class EventsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!User.IsInRole("Admin"))
+        {
+            @event.UserId = currentUserId ?? string.Empty;
+        }
+
         var createdEvent = await _eventService.CreateEventAsync(@event, cancellationToken);
 
         return CreatedAtAction(nameof(GetEvent), new { id = createdEvent.Id }, createdEvent);
@@ -63,6 +70,15 @@ public class EventsController : ControllerBase
     [Authorize(Roles = "Admin,Vendor")]
     public async Task<IActionResult> DeleteEvent(int id, CancellationToken cancellationToken)
     {
+        var @event = await _eventService.GetEventByIdAsync(id, cancellationToken);
+        if (@event == null)
+            return NotFound();
+
+        if (!IsEventOwnerOrAdmin(@event))
+        {
+            return Forbid();
+        }
+
         var result = await _eventService.DeleteEventAsync(id, cancellationToken);
         if (!result)
             return NotFound();

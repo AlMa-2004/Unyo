@@ -11,10 +11,10 @@ public class EventRegistrationRepository : Repository<EventRegistration>, IEvent
     public async Task<List<EventRegistration>> GetHistoryByUserIdAsync(string userId, CancellationToken cancellationToken = default)
     {
         return await _context.EventRegistrations
-            .Where(r => r.UserId == userId)
+            .Where(r => r.UserId != null && r.UserId == userId)
             .Include(r => r.Ticket)
                 .ThenInclude(t => t.Event)
-                    .ThenInclude(e => e.Venue)
+                    .ThenInclude(e => e!.Venue)
             .ToListAsync(cancellationToken);
     }
 }
