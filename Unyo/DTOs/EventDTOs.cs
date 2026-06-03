@@ -10,7 +10,7 @@ public record EventDto(
     DateTime Date,
     string? ImagePath,
     string VenueName,
-    string CategoryName,
+    List<string> CategoryNames,
     List<TicketSummaryDto> AvailableTickets);
 
 // POST
@@ -20,7 +20,7 @@ public record CreateEventDto(
     [Required] DateTime Date,
     string? ImagePath,
     [Required] int VenueId,
-    [Required] int CategoryId);
+    [Required] List<int> CategoryIds);
 
 // PUT
 public record UpdateEventDto(
@@ -29,7 +29,6 @@ public record UpdateEventDto(
     [Required] DateTime Date,
     string? ImagePath,
     [Required] int VenueId,
-    [Required] int CategoryId);
+    [Required] List<int> CategoryIds);
 
-// Sub-DTO 
 public record TicketSummaryDto(int Id, string Name, decimal Price);

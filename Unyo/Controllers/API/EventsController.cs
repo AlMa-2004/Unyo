@@ -66,27 +66,18 @@ public class EventsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        // Convert incoming DTO to actual database Entity
         var @event = dto.MapToEntity();
 
-        // Security rule: Vendors can only create events for themselves. 
-        // Admins can create events for anyone (or pass a specific UserId via business logic if needed)
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!User.IsInRole("Admin"))
-        {
-            @event.UserId = currentUserId ?? string.Empty;
-        }
-        else
-        {
-            // If admin creates it, we can default it to Admin's ID or handle it according to your core logic
-            @event.UserId = currentUserId ?? string.Empty;
-        }
+        @event.UserId = currentUserId ?? string.Empty;
 
-        // Save via service
         var createdEvent = await _eventService.CreateEventAsync(@event, cancellationToken);
 
-        //  Return 201 Created with the mapped Response DTO
-        return CreatedAtAction(nameof(GetEvent), new { id = createdEvent.Id }, createdEvent.MapToDto());
+        await _eventService.UpdateEventCategoriesAsync(createdEvent.Id, dto.CategoryIds, cancellationToken);
+
+        var resultEvent = await _eventService.GetEventByIdAsync(createdEvent.Id, cancellationToken);
+
+        return CreatedAtAction(nameof(GetEvent), new { id = resultEvent!.Id }, resultEvent.MapToDto());
     }
 
     // DELETE: api/events/5

@@ -20,8 +20,7 @@ public class Event : BaseEntity
     public int VenueId { get; set; }
     public Venue Venue { get; set; } = null!;
 
-    public int CategoryId { get; set; }
-    public Category Category { get; set; } = null!;
+    public List<Category> Categories { get; set; } = new();
 
     [Required]
     public string UserId { get; set; } = string.Empty;

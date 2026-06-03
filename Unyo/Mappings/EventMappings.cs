@@ -17,7 +17,7 @@ public static class EventMappings
             @event.Date,
             @event.ImagePath,
             @event.Venue?.Name ?? "Unknown Venue",
-            @event.Category?.Name ?? "Unknown Category",
+            @event.Categories?.Select(c => c.Name).ToList() ?? new List<string> { "Unknown Category" },
             @event.Tickets?.Select(t => new TicketSummaryDto(t.Id, t.TypeName, t.Price)).ToList() ?? []
         );
     }
@@ -33,8 +33,7 @@ public static class EventMappings
             Description = dto.Description,
             Date = dto.Date,
             ImagePath = dto.ImagePath,
-            VenueId = dto.VenueId,
-            CategoryId = dto.CategoryId
+            VenueId = dto.VenueId
         };
     }
 }

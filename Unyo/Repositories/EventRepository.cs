@@ -11,7 +11,7 @@ public class EventRepository : Repository<Event>, IEventRepository
     public async Task<List<Event>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default)
     {
         return await _context.Events
-            .Include(e => e.Category)
+            .Include(e => e.Categories)
             .Include(e => e.Venue)
             .OrderBy(e => e.Date)
             .ToListAsync(cancellationToken);
@@ -20,7 +20,7 @@ public class EventRepository : Repository<Event>, IEventRepository
     public async Task<Event?> GetByIdWithDetailsAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _context.Events
-            .Include(e => e.Category)
+            .Include(e => e.Categories)
             .Include(e => e.Venue)
             .Include(e => e.Tickets)
             .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
