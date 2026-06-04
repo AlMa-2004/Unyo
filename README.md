@@ -4,6 +4,17 @@ A web platform for managing events, venues, tickets, and participant registratio
 
 ---
 
+## Screenshots
+
+![Landing](images/1.png)
+![Login](images/4.png)
+![Events List](images/2.png)
+![Edit Events](images/3.png)
+![Registrations](images/5.png)
+
+---
+
+
 ## Architecture
 
 ```
