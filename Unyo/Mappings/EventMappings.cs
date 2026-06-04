@@ -10,6 +10,8 @@ public static class EventMappings
     {
         if (@event == null) return null!;
 
+        int totalRegistrations = @event.Tickets?.Sum(t => t.Registrations?.Count ?? 0) ?? 0;
+
         return new EventDto(
             @event.Id,
             @event.Title,
@@ -18,7 +20,11 @@ public static class EventMappings
             @event.ImagePath,
             @event.Venue?.Name ?? "Unknown Venue",
             @event.Categories?.Select(c => c.Name).ToList() ?? new List<string> { "Unknown Category" },
-            @event.Tickets?.Select(t => new TicketSummaryDto(t.Id, t.TypeName, t.Price)).ToList() ?? []
+            @event.Tickets?.Select(t => new TicketSummaryDto(t.Id, t.TypeName, t.Price)).ToList() ?? [],
+            @event.UserId,
+            @event.Venue?.Capacity ?? 0,
+            totalRegistrations
+
         );
     }
 

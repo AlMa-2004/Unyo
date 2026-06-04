@@ -14,6 +14,7 @@ public class EventRepository : Repository<Event>, IEventRepository
             .Include(e => e.Categories)
             .Include(e => e.Venue)
             .Include(e => e.Tickets)
+                .ThenInclude(t => t.Registrations)
             .ToListAsync(cancellationToken);
     }
 
@@ -23,6 +24,8 @@ public class EventRepository : Repository<Event>, IEventRepository
             .Include(e => e.Categories)
             .Include(e => e.Venue)
             .Include(e => e.Tickets)
+            .Include(e => e.Tickets)
+                .ThenInclude(t => t.Registrations)
             .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
     }
 }

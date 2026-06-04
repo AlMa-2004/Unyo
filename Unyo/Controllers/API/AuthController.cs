@@ -36,12 +36,11 @@ public class AuthApiController : ControllerBase
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
-            return Unauthorized(new { message = "Date de logare incorecte." });
+            return Unauthorized(new { message = "Incorrect login credentials." });
 
         var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: false);
         if (!result.Succeeded)
-            return Unauthorized(new { message = "Date de logare incorecte." });
-
+            return Unauthorized(new { message = "Incorrect login credentials." });
         var token = await GenerateJwtAsync(user);
 
         return Ok(new

@@ -11,7 +11,14 @@ public record EventDto(
     string? ImagePath,
     string VenueName,
     List<string> CategoryNames,
-    List<TicketSummaryDto> AvailableTickets);
+    List<TicketSummaryDto> AvailableTickets,
+    string UserId,
+    int Capacity,    
+    int CurrentRegistrations
+)
+{
+    public int RemainingSeats => Capacity - CurrentRegistrations;
+}
 
 // POST
 public record CreateEventDto(
